@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import schedule.dto.request.LessonRequestDto;
 import schedule.dto.response.LessonResponseDto;
-import schedule.exception.CustomException;
 import schedule.model.Lesson;
 import schedule.service.LessonService;
 import schedule.service.mapper.LessonMapper;
@@ -36,68 +35,43 @@ public class LessonController {
 
     @PostMapping
     public LessonResponseDto add(@RequestBody @Valid LessonRequestDto dto) {
-        try {
-            return mapper.mapToDto(service.add(mapper.mapToModel(dto)));
-        } catch (Exception e) {
-            throw new CustomException("Can`t insert lesson - " + dto, e);
-        }
+        return mapper.mapToDto(service.add(mapper.mapToModel(dto)));
     }
 
     @PostMapping("/add_all")
     public List<LessonResponseDto> addAll(@RequestBody @Valid List<LessonRequestDto> dtos) {
-        try {
-            return dtos.stream()
-                    .map(mapper::mapToModel)
-                    .map(service::add)
-                    .map(mapper::mapToDto)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new CustomException("Can`t insert all lessons - " + dtos, e);
-        }
+        return dtos.stream()
+                .map(mapper::mapToModel)
+                .map(service::add)
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public LessonResponseDto get(@PathVariable Long id) {
-        try {
-            return mapper.mapToDto(service.get(id));
-        } catch (Exception e) {
-            throw new CustomException("Can`t get lesson by id - " + id, e);
-        }
+        return mapper.mapToDto(service.get(id));
     }
 
-    @GetMapping("/get_all")
+    @GetMapping
     public List<LessonResponseDto> getAllByStudentId(@RequestParam Long studentId,
-                                                    @RequestParam
-                                                    @DateTimeFormat(pattern = DATE_PATTERN)
-                                                            LocalDate date) {
-        try {
-            return service.getAllByStudentId(studentId, date).stream()
-                    .map(mapper::mapToDto)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new CustomException("Can`t get all lessons by student id - "
-                    + studentId + " and data " + date, e);
-        }
+                                                     @RequestParam
+                                                     @DateTimeFormat(pattern = DATE_PATTERN)
+                                                             LocalDate date) {
+        return service.getAllByStudentId(studentId, date).stream()
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
     @PutMapping("/{id}")
     public LessonResponseDto update(@PathVariable Long id,
                                     @RequestBody @Valid LessonRequestDto dto) {
-        try {
-            Lesson lesson = mapper.mapToModel(dto);
-            lesson.setId(id);
-            return mapper.mapToDto(service.add(lesson));
-        } catch (Exception e) {
-            throw new CustomException("Can`t update lesson - " + dto + " by id - " + id, e);
-        }
+        Lesson lesson = mapper.mapToModel(dto);
+        lesson.setId(id);
+        return mapper.mapToDto(service.add(lesson));
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        try {
-            service.delete(id);
-        } catch (Exception e) {
-            throw new CustomException("Can`t delete lesson by id - " + id, e);
-        }
+        service.delete(id);
     }
 }

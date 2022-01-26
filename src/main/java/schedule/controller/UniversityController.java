@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import schedule.dto.request.UniversityRequestDto;
 import schedule.dto.response.UniversityResponseDto;
-import schedule.exception.CustomException;
 import schedule.model.University;
 import schedule.service.UniversityService;
 import schedule.service.mapper.UniversityMapper;
@@ -31,64 +30,40 @@ public class UniversityController {
 
     @PostMapping
     public UniversityResponseDto add(@RequestBody @Valid UniversityRequestDto dto) {
-        try {
-            return mapper.mapToDto(service.add(mapper.mapToModel(dto)));
-        } catch (Exception e) {
-            throw new CustomException("Can`t insert university - " + dto, e);
-        }
+        return mapper.mapToDto(service.add(mapper.mapToModel(dto)));
     }
 
     @PostMapping("/add_all")
     public List<UniversityResponseDto> addAll(@RequestBody @Valid List<UniversityRequestDto> dtos) {
-        try {
-            return dtos.stream()
-                    .map(mapper::mapToModel)
-                    .map(service::add)
-                    .map(mapper::mapToDto)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new CustomException("Can`t insert all universities - " + dtos, e);
-        }
+        return dtos.stream()
+                .map(mapper::mapToModel)
+                .map(service::add)
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public UniversityResponseDto get(@PathVariable Long id) {
-        try {
-            return mapper.mapToDto(service.get(id));
-        } catch (Exception e) {
-            throw new CustomException("Can`t get university by id - " + id, e);
-        }
+        return mapper.mapToDto(service.get(id));
     }
 
     @GetMapping("/get_all")
     public List<UniversityResponseDto> getAll() {
-        try {
-            return service.getAll().stream()
-                    .map(mapper::mapToDto)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new CustomException("Can`t get all universities", e);
-        }
+        return service.getAll().stream()
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
     @PutMapping("/{id}")
     public UniversityResponseDto update(@PathVariable Long id,
                                         @RequestBody @Valid UniversityRequestDto dto) {
-        try {
-            University university = mapper.mapToModel(dto);
-            university.setId(id);
-            return mapper.mapToDto(university);
-        } catch (Exception e) {
-            throw new CustomException("Can`t update university - " + dto + " by id - " + id, e);
-        }
+        University university = mapper.mapToModel(dto);
+        university.setId(id);
+        return mapper.mapToDto(university);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        try {
-            service.delete(id);
-        } catch (Exception e) {
-            throw new CustomException("Can`t delete university by id - " + id, e);
-        }
+        service.delete(id);
     }
 }

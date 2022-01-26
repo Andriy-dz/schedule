@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import schedule.dto.request.StudentRequestDto;
 import schedule.dto.response.StudentResponseDto;
-import schedule.exception.CustomException;
 import schedule.model.Student;
 import schedule.service.StudentService;
 import schedule.service.mapper.StudentMapper;
@@ -31,64 +31,40 @@ public class StudentController {
 
     @PostMapping
     public StudentResponseDto add(@RequestBody @Valid StudentRequestDto dto) {
-        try {
-            return mapper.mapToDto(service.add(mapper.mapToModel(dto)));
-        } catch (Exception e) {
-            throw new CustomException("Can`t insert student - " + dto, e);
-        }
+        return mapper.mapToDto(service.add(mapper.mapToModel(dto)));
     }
 
     @PostMapping("/add_all")
     public List<StudentResponseDto> addAll(@RequestBody @Valid List<StudentRequestDto> dtos) {
-        try {
-            return dtos.stream()
-                    .map(mapper::mapToModel)
-                    .map(service::add)
-                    .map(mapper::mapToDto)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new CustomException("Can`t insert all students - " + dtos, e);
-        }
+        return dtos.stream()
+                .map(mapper::mapToModel)
+                .map(service::add)
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public StudentResponseDto get(@PathVariable Long id) {
-        try {
-            return mapper.mapToDto(service.get(id));
-        } catch (Exception e) {
-            throw new CustomException("Can`t get student by id - " + id, e);
-        }
+        return mapper.mapToDto(service.get(id));
     }
 
-    @GetMapping("/get_all/{groupId}")
-    public List<StudentResponseDto> getByGroupId(@PathVariable Long groupId) {
-        try {
-            return service.getAllByGroupId(groupId).stream()
-                    .map(mapper::mapToDto)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new CustomException("Can`t get all students by group id - " + groupId, e);
-        }
+    @GetMapping
+    public List<StudentResponseDto> getByGroupId(@RequestParam Long groupId) {
+        return service.getAllByGroupId(groupId).stream()
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
     @PutMapping("/{id}")
     public StudentResponseDto update(@PathVariable Long id,
                                      @RequestBody @Valid StudentRequestDto dto) {
-        try {
-            Student student = mapper.mapToModel(dto);
-            student.setId(id);
-            return mapper.mapToDto(service.update(student));
-        } catch (Exception e) {
-            throw new CustomException("Can`t update student - " + dto + " by id - " + id, e);
-        }
+        Student student = mapper.mapToModel(dto);
+        student.setId(id);
+        return mapper.mapToDto(service.update(student));
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        try {
-            service.delete(id);
-        } catch (Exception e) {
-            throw new CustomException("Can`t delete student by id - " + id, e);
-        }
+        service.delete(id);
     }
 }
