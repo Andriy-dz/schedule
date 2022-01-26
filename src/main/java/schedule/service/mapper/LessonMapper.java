@@ -18,7 +18,7 @@ public class LessonMapper implements RequestDtoMapper<LessonRequestDto, Lesson>,
     private final TeacherService teacherService;
     private final GroupService groupService;
     private final DateTimeFormatter pattern =
-            DateTimeFormatter.ofPattern(DateTimePatternUtil.DATE_PATTERN);
+            DateTimeFormatter.ofPattern(DateTimePatternUtil.DATE_TIME_PATTERN);
 
     public LessonMapper(AudienceService audienceService,
                         TeacherService teacherService,
